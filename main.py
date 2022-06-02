@@ -1,4 +1,5 @@
 from ImageLoader import ImageLoader
+from PedastrianTracker import PedastrianTracker
 import time
 import cv2 as cv,cv2
 
@@ -10,10 +11,11 @@ if __name__ == "__main__":
         img = loader.get_image(img_num)
         cv.imshow('Image', img)
         key_code = cv.waitKey(10)
-        if key_code == 27:
-            break
         time.sleep(.01)
         img_num += 1
+        if key_code == 27:
+            break
+
     cv.destroyAllWindows()
 
         # elif key_code == ord('s'):

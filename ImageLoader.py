@@ -7,12 +7,12 @@ SCALE = 100
 
 class ImageLoader:
     def __init__(self):
+        self.frames_names = sorted(os.listdir("c6s1/frames"))     
         self.img_list = self.load_images()
 
     def load_images(self):
-        img_list = []
-        files = sorted(os.listdir("c6s1/frames"))            
-        for file in files:
+        img_list = []       
+        for file in self.frames_names:
             if file.endswith(".jpg"):
                 img_color = cv.imread("c6s1/frames/" + file)
                 img_list.append((file, img_color))
@@ -24,7 +24,8 @@ class ImageLoader:
         dim = (width, height)
         return cv2.resize(image, dim, interpolation=cv2.INTER_AREA)
 
-    def drawBB(self,tup_img):
+
+    def drawBB(self, tup_img):
         img = tup_img[1]
         img_name = tup_img[0]
         with open(f"c6s1/bboxes.txt", "r") as f:
@@ -45,3 +46,5 @@ class ImageLoader:
         resized = self.resize(image=img_to_display)
         return resized
 
+    def get_bbox(self):
+        pass
