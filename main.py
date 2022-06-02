@@ -1,14 +1,16 @@
 from ImageLoader import ImageLoader
-from PedastrianTracker import PedastrianTracker
+from PedestrianTracker import PedestrianTracker
 import time
 import cv2 as cv,cv2
 
 if __name__ == "__main__":
     loader = ImageLoader()
+    tracker = PedestrianTracker()
     cv.namedWindow('Image')
     img_num = 0
     while True:
-        img = loader.get_image(img_num)
+        img, coords = loader.get_data(img_num)
+        tracker.new_frame(img, coords)
         cv.imshow('Image', img)
         key_code = cv.waitKey(10)
         time.sleep(.01)

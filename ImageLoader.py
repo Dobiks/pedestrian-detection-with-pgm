@@ -27,6 +27,7 @@ class ImageLoader:
 
     def drawBB(self, tup_img):
         img = tup_img[1]
+        coords_list = []
         img_name = tup_img[0]
         with open(f"c6s1/bboxes.txt", "r") as f:
             lines = f.readlines()
@@ -35,16 +36,14 @@ class ImageLoader:
                 if img_name in line and lines[idx].replace("\n","").isdigit():
                     for i in range(int(lines[idx])):
                         coords = lines[idx+i+1].split()
+                        coords_list.append(coords)
                         cv.rectangle(img, (int(float(coords[0])), int(float(coords[1]))), (int(float(coords[0]))+int(float(coords[2])),int(float(coords[1]))+int(float(coords[3]))), (0, 255, 0), 2)
-        return img
+        return img, coords_list
 
 
-    def get_image(self, image_num):
+    def get_data(self, image_num):
         img_color = self.img_list[image_num]
-        img_to_display = self.drawBB(img_color)
+        img_to_display, coords = self.drawBB(img_color)
         print(img_color[0])
         resized = self.resize(image=img_to_display)
-        return resized
-
-    def get_bbox(self):
-        pass
+        return resized, coords
