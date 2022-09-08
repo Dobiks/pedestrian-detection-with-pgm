@@ -2,6 +2,7 @@ import time
 import cv2 as cv,cv2
 import numpy as np
 import os
+import copy
 
 SCALE = 100
 
@@ -27,6 +28,7 @@ class ImageLoader:
 
     def drawBB(self, tup_img):
         img = tup_img[1]
+        org_img = copy.deepcopy(img)
         coords_list = []
         img_name = tup_img[0]
         with open(f"c6s1/bboxes.txt", "r") as f:
@@ -38,12 +40,12 @@ class ImageLoader:
                         coords = lines[idx+i+1].split()
                         coords_list.append(coords)
                         cv.rectangle(img, (int(float(coords[0])), int(float(coords[1]))), (int(float(coords[0]))+int(float(coords[2])),int(float(coords[1]))+int(float(coords[3]))), (0, 255, 0), 2)
-        return img, coords_list
+        return org_img, img, coords_list
 
 
     def get_data(self, image_num):
         img_color = self.img_list[image_num]
-        img_to_display, coords = self.drawBB(img_color)
-        print(img_color[0])
-        resized = self.resize(image=img_to_display)
-        return resized, coords
+        org_img, img_bboxes, coords = self.drawBB(img_color)
+        org_resized = self.resize(image=org_img)
+        resized = self.resize(image=img_bboxes)
+        return org_resized, resized, coords
