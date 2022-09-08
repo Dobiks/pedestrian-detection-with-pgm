@@ -1,4 +1,3 @@
-from cProfile import label
 import cv2
 import numpy as np
 from matplotlib import pyplot as plt
@@ -26,7 +25,6 @@ class Pedestrian:
             histograms.append(cv2.calcHist(
                 [channel], [0], None, [256], [0, 256]))
 
-        #plot
         if DEBUG:
             for i in range(len(histograms)):
                 plt.subplot(2, 3, i+1)
@@ -34,9 +32,8 @@ class Pedestrian:
             plt.show()
         return histograms
 
-    def get_image(self):
+    def get_image(self) -> np.ndarray:
         return self.image
 
-    def get_histograms(self):
+    def get_histograms(self) -> list:
         return self.histogram
-
