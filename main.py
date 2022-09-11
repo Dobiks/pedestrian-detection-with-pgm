@@ -1,26 +1,25 @@
 from ImageLoader import ImageLoader
-from PedestrianTracker import PedestrianTracker
-import time
-import cv2 as cv,cv2
+from Pedestrian import Pedestrian
+from GraphCreator import GraphCreator
+
 
 if __name__ == "__main__":
+    graph_creator = GraphCreator()
     loader = ImageLoader()
-    tracker = PedestrianTracker()
-    cv.namedWindow('Image')
-    img_num = 0
-    while True:
-        img, coords = loader.get_data(img_num)
-        tracker.new_frame(img, coords)
-        cv.imshow('Image', img)
-        key_code = cv.waitKey(10)
-        time.sleep(.01)
-        img_num += 1
-        if key_code == 27:
-            break
+    previous_pedestrians = None
+    for img_num in range(loader.get_img_list_len()):
+        org_img, coords = loader.get_data(img_num)
+        pedestrians = [Pedestrian(org_img, coord, i) for i, coord in enumerate(coords)]
 
-    cv.destroyAllWindows()
+        if len(pedestrians) == 0:
+            previous_pedestrians = None
+            continue
 
-        # elif key_code == ord('s'):
-        #     image_num += 1
-        # elif key_code == ord('a'):
-        #     image_num -= 1
+        if previous_pedestrians is None:
+            previous_pedestrians = pedestrians
+            print('-1 '*len(pedestrians))
+            continue
+
+        result = graph_creator.create(pedestrians, previous_pedestrians)
+        print(result)
+        previous_pedestrians = pedestrians

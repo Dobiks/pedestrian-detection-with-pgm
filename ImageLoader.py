@@ -1,49 +1,43 @@
-import time
-import cv2 as cv,cv2
-import numpy as np
+import cv2
 import os
 
-SCALE = 100
 
 class ImageLoader:
-    def __init__(self):
-        self.frames_names = sorted(os.listdir("c6s1/frames"))     
-        self.img_list = self.load_images()
+    def __init__(self) -> None:
+        self.frames_names = sorted(os.listdir("c6s1/frames"))
+        self.lines = self.__get_lines("c6s1/bboxes.txt")
+        self.img_list = self.__load_images()
+        self.img_list_len = len(self.img_list)
 
-    def load_images(self):
-        img_list = []       
+    def __load_images(self) -> list:
+        img_list = []
         for file in self.frames_names:
             if file.endswith(".jpg"):
-                img_color = cv.imread("c6s1/frames/" + file)
+                img_color = cv2.imread("c6s1/frames/" + file)
                 img_list.append((file, img_color))
         return img_list
-    
-    def resize(self, image = None):
-        width = int(image.shape[1] * SCALE / 100)
-        height = int(image.shape[0] * SCALE / 100)
-        dim = (width, height)
-        return cv2.resize(image, dim, interpolation=cv2.INTER_AREA)
 
+    def __get_lines(self, file) -> list:
+        with open(file, "r") as f:
+            lines = f.readlines()
+        return lines
 
-    def drawBB(self, tup_img):
-        img = tup_img[1]
+    def __get_BB(self, tup_img) -> list:
         coords_list = []
         img_name = tup_img[0]
-        with open(f"c6s1/bboxes.txt", "r") as f:
-            lines = f.readlines()
-            for line in lines:
-                idx = lines.index(line)+1
-                if img_name in line and lines[idx].replace("\n","").isdigit():
-                    for i in range(int(lines[idx])):
-                        coords = lines[idx+i+1].split()
-                        coords_list.append(coords)
-                        cv.rectangle(img, (int(float(coords[0])), int(float(coords[1]))), (int(float(coords[0]))+int(float(coords[2])),int(float(coords[1]))+int(float(coords[3]))), (0, 255, 0), 2)
-        return img, coords_list
+        for line in self.lines:
+            idx = self.lines.index(line)+1
+            if img_name in line and int(self.lines[idx].replace("\n", "")) > 0:
+                for i in range(int(self.lines[idx])):
+                    coords = self.lines[idx+i+1].split()
+                    coords_list.append(coords)
+        return coords_list
 
+    def get_img_list_len(self) -> int:
+        return self.img_list_len
 
-    def get_data(self, image_num):
+    def get_data(self, image_num) -> tuple:
         img_color = self.img_list[image_num]
-        img_to_display, coords = self.drawBB(img_color)
-        print(img_color[0])
-        resized = self.resize(image=img_to_display)
-        return resized, coords
+        org_img = img_color[1]
+        coords = self.__get_BB(img_color)
+        return org_img, coords

@@ -2,3 +2,9 @@ c6s1/
 test/*
 __pycache__/ImageLoader.cpython-38.pyc
 *.pyc
+__pycache__/Pedestrian.cpython-38.pyc
+*.pyc
+*.pyc
+test.py
+main copy.py
+__pycache__/Pedestrian.cpython-38.pyc

@@ -1,28 +1,35 @@
+import cv2
+import numpy as np
+from matplotlib import pyplot as plt
+
+
 class Pedestrian:
-    def __init__(self, frame, coords) -> None:
-        self.frame = frame
-        self.coords = coords
-        self.center = self.get_center()
-        self.size = self.get_size()
+    def __init__(self, frame, coords, id: int) -> None:
+        self.image = self.__create_image(frame, coords)
+        self.histogram = self.__create_histograms()
+        self.id = str(id)
 
-    def cropp_frame(self):
-        x = int(float(self.coords[0]))
-        y = int(float(self.coords[1]))
-        w = int(float(self.coords[2]))
-        h = int(float(self.coords[3]))
-        return self.frame[y:y+h, x:x+w]
+    def __create_image(self, frame, coords) -> np.ndarray:
+        x = int(float(coords[0]))
+        y = int(float(coords[1]))
+        w = int(float(coords[2]))
+        h = int(float(coords[3]))
+        return frame[y:y+h, x:x+w]
 
-    def get_size(self):
-        w = int(float(self.coords[2]))
-        h = int(float(self.coords[3]))
-        size = (w, h)
-        return size        
+    def __create_histograms(self) -> list:
+        channels = cv2.split(self.image)
+        channels += cv2.split(cv2.cvtColor(self.image, cv2.COLOR_BGR2HSV))
+        histograms = []
+        for channel in channels:
+            histograms.append(cv2.calcHist(
+                [channel], [0], None, [256], [0, 256]))
+        return histograms
 
-    def get_center(self):
-        x = int(float(self.coords[0]))
-        y = int(float(self.coords[1]))
-        w = int(float(self.coords[2]))
-        h = int(float(self.coords[3]))
-        center = (x + w / 2, y + h / 2)
-        print(center)
-        return center
+    def get_image(self) -> np.ndarray:
+        return self.image
+
+    def get_histograms(self) -> list:
+        return self.histogram
+
+    def get_id(self) -> int:
+        return self.id
