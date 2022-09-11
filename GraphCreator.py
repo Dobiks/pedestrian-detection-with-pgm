@@ -47,6 +47,6 @@ class GraphCreator:
         bp.calibrate()
         bp_dict = bp.map_query(g.get_variable_nodes(), show_progress=False)
 
-        result = [str(bp_dict[ped.get_id()]-1) for ped in pedestrians if ped.get_id() in bp_dict] 
+        result = [str(bp_dict[ped.get_id()]-1) for ped in pedestrians]
 
         return ' '.join(result)

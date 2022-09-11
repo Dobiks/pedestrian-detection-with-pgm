@@ -1,11 +1,15 @@
 from ImageLoader import ImageLoader
 from Pedestrian import Pedestrian
 from GraphCreator import GraphCreator
+import argparse
 
 
 if __name__ == "__main__":
+    arg = argparse.ArgumentParser()
+    arg.add_argument('ds', type=str)
+    args = arg.parse_args()
+    loader = ImageLoader(args.ds)
     graph_creator = GraphCreator()
-    loader = ImageLoader()
     previous_pedestrians = None
     for img_num in range(loader.get_img_list_len()):
         org_img, coords = loader.get_data(img_num)

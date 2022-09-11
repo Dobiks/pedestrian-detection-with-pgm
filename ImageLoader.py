@@ -3,17 +3,17 @@ import os
 
 
 class ImageLoader:
-    def __init__(self) -> None:
-        self.frames_names = sorted(os.listdir("c6s1/frames"))
-        self.lines = self.__get_lines("c6s1/bboxes.txt")
-        self.img_list = self.__load_images()
+    def __init__(self, ds_path) -> None:
+        self.frames_names = sorted(os.listdir(f"{ds_path}/frames/"))
+        self.lines = self.__get_lines(f"{ds_path}/bboxes.txt")
+        self.img_list = self.__load_images(ds_path)
         self.img_list_len = len(self.img_list)
 
-    def __load_images(self) -> list:
+    def __load_images(self, ds_path) -> list:
         img_list = []
         for file in self.frames_names:
             if file.endswith(".jpg"):
-                img_color = cv2.imread("c6s1/frames/" + file)
+                img_color = cv2.imread(f"{ds_path}/frames/{file}")
                 img_list.append((file, img_color))
         return img_list
 
