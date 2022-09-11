@@ -20,6 +20,7 @@ class GraphCreator:
     def create(self, pedestrians: Pedestrian, previous_pedestrians: Pedestrian) -> str:
         g = FactorGraph()
         for current_ped in pedestrians:
+            # loop to calculate histogram similarity between current_ped and previous_ped
             hist_means = []
             g.add_nodes_from([current_ped.get_id()])
             for previous_ped in previous_pedestrians:
@@ -29,13 +30,14 @@ class GraphCreator:
                                      hist_idx], previous_ped.get_histograms()[hist_idx], cv2.HISTCMP_BHATTACHARYYA))
                 hist_means.append(sum(hist_diff) / len(hist_diff))
             tmp_df = DiscreteFactor(
-                [current_ped.get_id()], [len(previous_pedestrians)+1], [[0.54] + hist_means])
+                [current_ped.get_id()], [len(previous_pedestrians)+1], [[0.60] + hist_means])
             g.add_factors(tmp_df)
             g.add_edge(current_ped.get_id(), tmp_df)
 
         matrix = self.__get_matrix(previous_pedestrians)
 
         if len(pedestrians) > 1:
+            # using above matrix to prevent the same pedestrian to be matched with multiple pedestrians
             for ped1, ped2 in combinations(pedestrians, 2):
                 tmp_df = DiscreteFactor([ped1.get_id(), ped2.get_id()],
                                         [len(previous_pedestrians)+1, len(previous_pedestrians)+1], matrix)
@@ -47,6 +49,7 @@ class GraphCreator:
         bp.calibrate()
         bp_dict = bp.map_query(g.get_variable_nodes(), show_progress=False)
 
+        # convert dictionary to list of strings
         result = [str(bp_dict[ped.get_id()]-1) for ped in pedestrians]
 
         return ' '.join(result)
