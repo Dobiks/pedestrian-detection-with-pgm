@@ -10,6 +10,7 @@ class ImageLoader:
         self.img_list_len = len(self.img_list)
 
     def __load_images(self, ds_path) -> list:
+        # Load images from dataset
         img_list = []
         for file in self.frames_names:
             if file.endswith(".jpg"):
@@ -18,11 +19,13 @@ class ImageLoader:
         return img_list
 
     def __get_lines(self, file) -> list:
+        # Get lines from file
         with open(file, "r") as f:
             lines = f.readlines()
         return lines
 
     def __get_BB(self, tup_img) -> list:
+        # Get bounding boxes for the image
         coords_list = []
         img_name = tup_img[0]
         for line in self.lines:
@@ -37,6 +40,7 @@ class ImageLoader:
         return self.img_list_len
 
     def get_data(self, image_num) -> tuple:
+        # Get image and bounding boxes
         img_color = self.img_list[image_num]
         org_img = img_color[1]
         coords = self.__get_BB(img_color)
