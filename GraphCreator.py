@@ -19,34 +19,34 @@ class GraphCreator:
 
     def create(self, pedestrians: Pedestrian, previous_pedestrians: Pedestrian) -> str:
         g = FactorGraph()
-        for i, current_ped in enumerate(pedestrians):
+        for current_ped in pedestrians:
             hist_means = []
-            g.add_nodes_from([str(i)])
-            for j, previous_ped in enumerate(previous_pedestrians):
+            g.add_nodes_from([current_ped.get_id()])
+            for previous_ped in previous_pedestrians:
                 hist_diff = []
                 for hist_idx in range(len(current_ped.get_histograms())):
                     hist_diff.append(1.0 - cv2.compareHist(current_ped.get_histograms()[
                                      hist_idx], previous_ped.get_histograms()[hist_idx], cv2.HISTCMP_BHATTACHARYYA))
                 hist_means.append(sum(hist_diff) / len(hist_diff))
             tmp_df = DiscreteFactor(
-                [str(i)], [len(previous_pedestrians)+1], [[0.54] + hist_means])
+                [current_ped.get_id()], [len(previous_pedestrians)+1], [[0.54] + hist_means])
             g.add_factors(tmp_df)
-            g.add_edge(str(i), tmp_df)
+            g.add_edge(current_ped.get_id(), tmp_df)
 
         matrix = self.__get_matrix(previous_pedestrians)
 
         if len(pedestrians) > 1:
             for ped1, ped2 in combinations(pedestrians, 2):
-                tmp_df = DiscreteFactor([str(pedestrians.index(ped1)), str(pedestrians.index(ped2))],
+                tmp_df = DiscreteFactor([ped1.get_id(), ped2.get_id()],
                                         [len(previous_pedestrians)+1, len(previous_pedestrians)+1], matrix)
                 g.add_factors(tmp_df)
-                g.add_edge(str(pedestrians.index(ped1)), tmp_df)
-                g.add_edge(str(pedestrians.index(ped2)), tmp_df)
+                g.add_edge(ped1.get_id(), tmp_df)
+                g.add_edge(ped2.get_id(), tmp_df)
 
         bp = BeliefPropagation(g)
         bp.calibrate()
         bp_dict = bp.map_query(g.get_variable_nodes(), show_progress=False)
 
-        result = [str(bp_dict[key]-1) for key in bp_dict]
+        result = [str(bp_dict[ped.get_id()]-1) for ped in pedestrians if ped.get_id() in bp_dict] 
 
         return ' '.join(result)

@@ -9,7 +9,7 @@ class ImageLoader:
         self.img_list = self.__load_images()
         self.img_list_len = len(self.img_list)
 
-    def __load_images(self)->list:
+    def __load_images(self) -> list:
         img_list = []
         for file in self.frames_names:
             if file.endswith(".jpg"):
@@ -33,10 +33,10 @@ class ImageLoader:
                     coords_list.append(coords)
         return coords_list
 
-    def get_img_list_len(self)->int:
+    def get_img_list_len(self) -> int:
         return self.img_list_len
 
-    def get_data(self, image_num)->tuple:
+    def get_data(self, image_num) -> tuple:
         img_color = self.img_list[image_num]
         org_img = img_color[1]
         coords = self.__get_BB(img_color)

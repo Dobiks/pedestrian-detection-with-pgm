@@ -2,13 +2,12 @@ import cv2
 import numpy as np
 from matplotlib import pyplot as plt
 
-DEBUG = False
-
 
 class Pedestrian:
-    def __init__(self, frame, coords) -> None:
+    def __init__(self, frame, coords, id: int) -> None:
         self.image = self.__create_image(frame, coords)
         self.histogram = self.__create_histograms()
+        self.id = str(id)
 
     def __create_image(self, frame, coords) -> np.ndarray:
         x = int(float(coords[0]))
@@ -24,12 +23,6 @@ class Pedestrian:
         for channel in channels:
             histograms.append(cv2.calcHist(
                 [channel], [0], None, [256], [0, 256]))
-
-        if DEBUG:
-            for i in range(len(histograms)):
-                plt.subplot(2, 3, i+1)
-                plt.plot(histograms[i])
-            plt.show()
         return histograms
 
     def get_image(self) -> np.ndarray:
@@ -37,3 +30,6 @@ class Pedestrian:
 
     def get_histograms(self) -> list:
         return self.histogram
+
+    def get_id(self) -> int:
+        return self.id

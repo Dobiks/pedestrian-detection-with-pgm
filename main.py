@@ -9,10 +9,9 @@ if __name__ == "__main__":
     previous_pedestrians = None
     for img_num in range(loader.get_img_list_len()):
         org_img, coords = loader.get_data(img_num)
-        pedestrians = [Pedestrian(org_img, coord) for coord in coords]
+        pedestrians = [Pedestrian(org_img, coord, i) for i, coord in enumerate(coords)]
 
         if len(pedestrians) == 0:
-            print()
             previous_pedestrians = None
             continue
 
