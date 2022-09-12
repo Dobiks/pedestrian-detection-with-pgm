@@ -28,6 +28,7 @@ class ImageLoader:
         # Get bounding boxes for the image
         coords_list = []
         img_name = tup_img[0]
+        # TODO Mało efektywne rozwiązanie.
         for line in self.lines:
             idx = self.lines.index(line)+1
             if img_name in line and int(self.lines[idx].replace("\n", "")) > 0:
